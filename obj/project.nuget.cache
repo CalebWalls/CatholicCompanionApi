@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "m7eSeNqmS0qQnfJ3r0pZMv9foKfGOqvclSejGcChkEkRZ4dVngCFb/iiSwBS1fxOwxxcW/dZ853JI63ap+Iu6Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\CalebWalls\\Desktop\\Personal\\CatholicCompanion.Api\\CatholicCompanion.Api\\CatholicCompanion.Api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\CalebWalls\\.nuget\\packages\\htmlagilitypack\\1.11.60\\htmlagilitypack.1.11.60.nupkg.sha512",
+    "C:\\Users\\CalebWalls\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\CalebWalls\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\CalebWalls\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\CalebWalls\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\CalebWalls\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\CalebWalls\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
