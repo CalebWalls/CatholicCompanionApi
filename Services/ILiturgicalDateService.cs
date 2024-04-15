@@ -4,6 +4,6 @@ namespace CatholicCompanion.Api.Services
 {
     public interface ILiturgicalDateService
     {
-        Task<string> GetDate(DateRequest request);
+        Task<DateResponse> GetDate(DateRequest request);
     }
 }

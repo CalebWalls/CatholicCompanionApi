@@ -5,10 +5,17 @@ namespace CatholicCompanion.Api.Services
 {
     public class LiturgicalDateService : ILiturgicalDateService
     {
-        public async Task<string> GetDate(DateRequest request)
+        public async Task<DateResponse> GetDate(DateRequest request)
         {
-            var htmlDoc = await GetHtml(request);
-            return GetLiturgicalDate(htmlDoc);
+            var (htmlDocs,dates) = await GetHtml(request);
+            var liturgicalDates = new List<string>();
+            foreach (var htmlDoc in htmlDocs)
+            {
+                var liturgicalDate = GetLiturgicalDate(htmlDoc);
+                if (liturgicalDate != null)
+                    liturgicalDates.Add(liturgicalDate);
+            }
+            return new DateResponse { LiturgicalDate = liturgicalDates, Date = dates };
         }
 
         private static string GetLiturgicalDate(HtmlDocument htmlDoc)
@@ -21,16 +28,27 @@ namespace CatholicCompanion.Api.Services
             return liturgicalDayText;
         }
 
-        private static async Task<HtmlDocument> GetHtml(DateRequest request)
+        private static async Task<(List<HtmlDocument> HtmlDocs, List<DateTime> Dates)> GetHtml(DateRequest request)
         {
             var date = DateTime.Parse(request.Date);
-            var stringDate = date.ToString("MMddyy");
-            var url = $"https://bible.usccb.org/bible/readings/{stringDate}.cfm";
-            var httpClient = new HttpClient();
-            var html = await httpClient.GetStringAsync(url);
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(html);
-            return htmlDoc;
+            var daysToProcess = new List<DateTime>();
+            for (int i = 0; i < 7; i++)
+            {
+                daysToProcess.Add(date.AddDays(i));
+            }
+            var htmlDocList = new List<HtmlDocument>();
+
+            foreach (var day in daysToProcess)
+            {
+                var stringDate = day.ToString("MMddyy");
+                var url = $"https://bible.usccb.org/bible/readings/{stringDate}.cfm";
+                var httpClient = new HttpClient();
+                var html = await httpClient.GetStringAsync(url);
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(html);
+                htmlDocList.Add(htmlDoc);
+            }
+            return (HtmlDocs: htmlDocList, Dates: daysToProcess);
         }
     }
 }

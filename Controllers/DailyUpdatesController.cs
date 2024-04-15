@@ -22,7 +22,7 @@ namespace CatholicCompanion.Api.Controllers
 
         [HttpPost]
         [Route("LiturgicalDate")]
-        public async Task<string> GetLiturgicalCalendar(DateRequest request)
+        public async Task<DateResponse> GetLiturgicalCalendar(DateRequest request)
         {
             return await _liturgicalDateService.GetDate(request);
         }
