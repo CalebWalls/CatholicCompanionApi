@@ -31,3 +31,4 @@ C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api
 C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Debug\net8.0\CatholicCompanion.Api.genruntimeconfig.cache
 C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Debug\net8.0\ref\CatholicCompanion.Api.dll
 C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\bin\Debug\net8.0\HtmlAgilityPack.dll
+C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Debug\net8.0\CatholicCompanion.Api.sourcelink.json

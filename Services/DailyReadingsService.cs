@@ -101,7 +101,8 @@ namespace CatholicCompanion.Api.Services
 
         private static async Task<HtmlDocument> GetHtml(DateRequest request)
         {
-            var stringDate = request.Date.Value.ToString("MMddyy");
+            var date = DateTime.Parse(request.Date);
+            var stringDate = date.ToString("MMddyy");
             var url = $"https://bible.usccb.org/bible/readings/{stringDate}.cfm";
             var httpClient = new HttpClient();
             var html = await httpClient.GetStringAsync(url);
