@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\CatholicCompanion.Api.props" />
+</Project>

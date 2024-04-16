@@ -19,7 +19,7 @@ if (!builder.Environment.IsDevelopment())
             builder =>
             {
                 //change this once deployed
-                builder.WithOrigins("https://studysphereedu.azurewebsites.net")
+                builder.WithOrigins("https://catholiccompanion.azurewebsites.net")
                        .AllowAnyHeader()
                        .AllowAnyMethod();
             });
@@ -43,11 +43,9 @@ else
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
 

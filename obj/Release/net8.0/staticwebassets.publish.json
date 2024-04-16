@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "5H8jaSozlBWsXa+RZVvuEyy5takn3jbkfLpe6o8d5T8=",
+  "Source": "CatholicCompanion.Api",
+  "BasePath": "_content/CatholicCompanion.Api",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
