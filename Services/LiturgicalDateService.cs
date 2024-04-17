@@ -5,9 +5,11 @@ namespace CatholicCompanion.Api.Services
 {
     public class LiturgicalDateService : ILiturgicalDateService
     {
+        private static readonly HttpClient httpClient = new HttpClient();
+
         public async Task<DateResponse> GetDate(DateRequest request)
         {
-            var (htmlDocs,dates) = await GetHtml(request);
+            var (htmlDocs, dates) = await GetHtml(request);
             var liturgicalDates = new List<string>();
             foreach (var htmlDoc in htmlDocs)
             {
@@ -36,19 +38,20 @@ namespace CatholicCompanion.Api.Services
             {
                 daysToProcess.Add(date.AddDays(i));
             }
-            var htmlDocList = new List<HtmlDocument>();
 
-            foreach (var day in daysToProcess)
+            var tasks = daysToProcess.Select(async day =>
             {
                 var stringDate = day.ToString("MMddyy");
                 var url = $"https://bible.usccb.org/bible/readings/{stringDate}.cfm";
-                var httpClient = new HttpClient();
                 var html = await httpClient.GetStringAsync(url);
                 var htmlDoc = new HtmlDocument();
                 htmlDoc.LoadHtml(html);
-                htmlDocList.Add(htmlDoc);
-            }
-            return (HtmlDocs: htmlDocList, Dates: daysToProcess);
+                return htmlDoc;
+            });
+
+            var htmlDocs = await Task.WhenAll(tasks);
+            return (HtmlDocs: htmlDocs.ToList(), Dates: daysToProcess);
         }
+
     }
 }
