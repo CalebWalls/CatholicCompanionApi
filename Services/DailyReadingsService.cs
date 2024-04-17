@@ -9,17 +9,29 @@ namespace CatholicCompanion.Api.Services
 
         public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request)
         {
-            var htmlDoc = await GetHtml(request);
-            var nodes = htmlDoc.DocumentNode.SelectNodes(ReadingsNode);
-
-            return new DailyReadingsResponse
+            try
             {
-                FirstReading = GetReading(nodes.FirstOrDefault()),
-                ResponsorialPsalm = GetReading(nodes.Skip(1).FirstOrDefault()),
-                SecondReading = GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("Reading 2"))),
-                AlleluiaVerse = GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("R. Alleluia, alleluia"))),
-                GospelReading = GetReading(nodes.LastOrDefault())
-            };
+                var htmlDoc = await GetHtml(request);
+                var nodes = htmlDoc.DocumentNode.SelectNodes(ReadingsNode);
+
+                return new DailyReadingsResponse
+                {
+                    FirstReading = GetReading(nodes.FirstOrDefault()),
+                    ResponsorialPsalm = GetReading(nodes.Skip(1).FirstOrDefault()),
+                    SecondReading = GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("Reading 2"))),
+                    AlleluiaVerse = GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("R. Alleluia, alleluia"))),
+                    GospelReading = GetReading(nodes.LastOrDefault())
+                };
+            }
+            catch (FormatException)
+            {
+                return new DailyReadingsResponse { Error = "Invalid DateTime" };
+            }
+            catch (Exception ex)
+            {
+                return new DailyReadingsResponse { Error = "Error Processing Request: " + ex.Message };
+            }
+            
         }
 
         private static string? GetReading(HtmlNode? node)

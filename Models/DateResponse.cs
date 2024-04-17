@@ -2,7 +2,8 @@
 {
     public class DateResponse
     {
-        public List<string> LiturgicalDate { get; set; }
-        public List<DateTime> Date { get; set; }
+        public List<string>? LiturgicalDate { get; set; }
+        public List<DateTime>? Date { get; set; }
+        public string? Error { get; set; }
     }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CatholicCompanion.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f193d7dcd3ab5605d9f82bfc34179116dee9e81a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe90639d3459565bc36773c85c2ce21484d5a978")]
 [assembly: System.Reflection.AssemblyProductAttribute("CatholicCompanion.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CatholicCompanion.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -7,5 +7,6 @@
         public string? SecondReading { get; set; }
         public string? AlleluiaVerse { get; set; }
         public string? GospelReading { get; set; }
+        public string? Error {  get; set; }
     }
 }

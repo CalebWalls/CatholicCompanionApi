@@ -9,15 +9,27 @@ namespace CatholicCompanion.Api.Services
 
         public async Task<DateResponse> GetDate(DateRequest request)
         {
-            var (htmlDocs, dates) = await GetHtml(request);
-            var liturgicalDates = new List<string>();
-            foreach (var htmlDoc in htmlDocs)
+            try
             {
-                var liturgicalDate = GetLiturgicalDate(htmlDoc);
-                if (liturgicalDate != null)
-                    liturgicalDates.Add(liturgicalDate);
+                var (htmlDocs, dates) = await GetHtml(request);
+                var liturgicalDates = new List<string>();
+                foreach (var htmlDoc in htmlDocs)
+                {
+                    var liturgicalDate = GetLiturgicalDate(htmlDoc);
+                    if (liturgicalDate != null)
+                        liturgicalDates.Add(liturgicalDate);
+                }
+                return new DateResponse { LiturgicalDate = liturgicalDates, Date = dates};
             }
-            return new DateResponse { LiturgicalDate = liturgicalDates, Date = dates };
+            catch (FormatException)
+            {
+                return new DateResponse { Error = "Invalid DateTime" };
+            }
+            catch (Exception ex)
+            {
+                return new DateResponse { Error = "Error Processing Request: " + ex.Message };
+            }
+
         }
 
         private static string GetLiturgicalDate(HtmlDocument htmlDoc)
