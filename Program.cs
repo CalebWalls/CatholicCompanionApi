@@ -43,6 +43,7 @@ else
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+//Remove the if statement if you want Swagger to display in prod and dev
 if(app.Environment.IsDevelopment())
 {
     app.UseSwagger();
