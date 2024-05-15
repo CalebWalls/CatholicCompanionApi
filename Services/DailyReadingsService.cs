@@ -47,10 +47,24 @@ namespace CatholicCompanion.Api.Services
             
         }
 
-        private static string? GetReading(HtmlNode? node)
+        public string GetReading(HtmlNode node)
         {
-            return node?.InnerText.Trim();
+            var reading = node?.InnerText.Trim();
+
+            if (reading != null)
+            {
+                var index = reading.IndexOf('\n');
+
+                if (index >= 0)
+                {
+                    // Remove everything up to the first newline character
+                    reading = reading.Substring(index + 1).Trim();
+                }
+            }
+
+            return reading;
         }
+
 
         private static async Task<(HtmlDocument htmlDoc, string url)> GetHtml(DateRequest request)
         {
