@@ -14,10 +14,11 @@ namespace CatholicCompanion.Api.Services
                 var website = await GetHtml(request);
                 var nodes = website.htmlDoc.DocumentNode.SelectNodes(ReadingsNode);
 
-                if(nodes == null)
+                if(nodes == null || nodes.Count <= 1)
                 {
                     website = await GetHtmlForVigil(request);
                     nodes = website.htmlDoc.DocumentNode.SelectNodes(ReadingsNode);
+                    
                     if(nodes == null)
                     {
                         return new DailyReadingsResponse
@@ -42,7 +43,9 @@ namespace CatholicCompanion.Api.Services
             }
             catch (Exception ex)
             {
-                return new DailyReadingsResponse { Error = "Error Processing Request: " + ex.Message };
+                var date = DateTime.Parse(request.Date);
+                var stringDate = date.ToString("MMddyy");
+                return new DailyReadingsResponse { Url = $"https://bible.usccb.org/bible/readings/{stringDate}.cfm", Error = "Error Processing Request: " + ex.Message };
             }
             
         }
