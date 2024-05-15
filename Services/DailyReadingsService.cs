@@ -11,8 +11,16 @@ namespace CatholicCompanion.Api.Services
         {
             try
             {
-                var htmlDoc = await GetHtml(request);
-                var nodes = htmlDoc.DocumentNode.SelectNodes(ReadingsNode);
+                var website = await GetHtml(request);
+                var nodes = website.htmlDoc.DocumentNode.SelectNodes(ReadingsNode);
+
+                if(nodes == null)
+                {
+                    return new DailyReadingsResponse
+                    {
+                        Url = website.url,
+                    };
+                }
 
                 return new DailyReadingsResponse
                 {
@@ -39,7 +47,7 @@ namespace CatholicCompanion.Api.Services
             return node?.InnerText.Trim();
         }
 
-        private static async Task<HtmlDocument> GetHtml(DateRequest request)
+        private static async Task<(HtmlDocument htmlDoc, string url)> GetHtml(DateRequest request)
         {
             var date = DateTime.Parse(request.Date);
             var stringDate = date.ToString("MMddyy");
@@ -48,7 +56,7 @@ namespace CatholicCompanion.Api.Services
             var html = await httpClient.GetStringAsync(url);
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
-            return htmlDoc;
+            return (htmlDoc, url);
         }
     }
 }

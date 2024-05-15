@@ -8,5 +8,6 @@
         public string? AlleluiaVerse { get; set; }
         public string? GospelReading { get; set; }
         public string? Error {  get; set; }
+        public string? Url { get; set; }
     }
 }
