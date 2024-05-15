@@ -16,17 +16,22 @@ namespace CatholicCompanion.Api.Services
 
                 if(nodes == null)
                 {
-                    return new DailyReadingsResponse
+                    website = await GetHtmlForVigil(request);
+                    nodes = website.htmlDoc.DocumentNode.SelectNodes(ReadingsNode);
+                    if(nodes == null)
                     {
-                        Url = website.url,
-                    };
+                        return new DailyReadingsResponse
+                        {
+                            Url = website.url,
+                        };
+                    }
                 }
 
                 return new DailyReadingsResponse
                 {
                     FirstReading = GetReading(nodes.FirstOrDefault()),
                     ResponsorialPsalm = GetReading(nodes.Skip(1).FirstOrDefault()),
-                    SecondReading = GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("Reading 2"))),
+                    SecondReading = GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("Reading 2"))) ?? GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("Reading II"))),
                     AlleluiaVerse = GetReading(nodes.FirstOrDefault(n => n.InnerText.Trim().Contains("R. Alleluia, alleluia"))),
                     GospelReading = GetReading(nodes.LastOrDefault())
                 };
@@ -52,6 +57,18 @@ namespace CatholicCompanion.Api.Services
             var date = DateTime.Parse(request.Date);
             var stringDate = date.ToString("MMddyy");
             var url = $"https://bible.usccb.org/bible/readings/{stringDate}.cfm";
+            var httpClient = new HttpClient();
+            var html = await httpClient.GetStringAsync(url);
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+            return (htmlDoc, url);
+        }
+
+        private static async Task<(HtmlDocument htmlDoc, string url)> GetHtmlForVigil(DateRequest request)
+        {
+            var date = DateTime.Parse(request.Date);
+            var stringDate = date.ToString("MMddyy");
+            var url = $"https://bible.usccb.org/bible/readings/{stringDate}-Vigil.cfm";
             var httpClient = new HttpClient();
             var html = await httpClient.GetStringAsync(url);
             var htmlDoc = new HtmlDocument();
