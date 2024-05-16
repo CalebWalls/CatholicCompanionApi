@@ -5,7 +5,7 @@ namespace CatholicCompanion.Api.Services
 {
     public class DailyReadingsService : IDailyReadingsService
     {
-        private readonly string ReadingsNode = "//div[@class='wr-block b-verse bg-white padding-bottom-m']//div[@class='content-body']";
+        private readonly string ReadingsNode = "//div[@class='wr-block b-verse bg-white padding-bottom-m']";
 
 
         public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request)
@@ -63,9 +63,18 @@ namespace CatholicCompanion.Api.Services
 
                 foreach (var segment in textSegments)
                 {
-                    // Trim the segment, remove HTML tags, add a space at the end, and add it to the result
+                    // Trim the segment, remove HTML tags, and trim again to remove all leading and trailing whitespace
                     var trimmedSegment = segment.Trim();
-                    var textWithoutHtml = RemoveHtmlTags(trimmedSegment);
+                    var textWithoutHtml = RemoveHtmlTags(trimmedSegment).Trim();
+
+                    // Check if the first two words contain one of the specified phrases and remove them if so
+                    var words = textWithoutHtml.Split(new[] { ' ', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    var firstTwoWords = string.Join(" ", words.Take(2));
+                    if (firstTwoWords.Contains("Reading I") || firstTwoWords.Contains("Reading 1") || firstTwoWords.Contains("Reading II") || firstTwoWords.Contains("Reading 2") || firstTwoWords.Contains("Alleluia") || firstTwoWords.Contains("Gospel") || firstTwoWords.Contains("Responsorial Psalm"))
+                    {
+                        textWithoutHtml = textWithoutHtml.Substring(firstTwoWords.Length).TrimStart();
+                    }
+
                     result += textWithoutHtml + " ";
                 }
 
@@ -75,6 +84,12 @@ namespace CatholicCompanion.Api.Services
 
             return null; // Or return something else as needed
         }
+
+
+
+
+
+
 
 
 
