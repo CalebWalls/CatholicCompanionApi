@@ -32,3 +32,5 @@ C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api
 C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Release\net8.0\CatholicCompanion.Api.pdb
 C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Release\net8.0\CatholicCompanion.Api.genruntimeconfig.cache
 C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Release\net8.0\ref\CatholicCompanion.Api.dll
+C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Release\net8.0\CatholicCompanion.Api.Properties.Resources.resources
+C:\Users\CalebWalls\Desktop\Personal\CatholicCompanion.Api\CatholicCompanion.Api\obj\Release\net8.0\CatholicCompanion.Api.csproj.GenerateResource.cache

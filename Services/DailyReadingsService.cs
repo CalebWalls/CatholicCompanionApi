@@ -5,7 +5,8 @@ namespace CatholicCompanion.Api.Services
 {
     public class DailyReadingsService : IDailyReadingsService
     {
-        private readonly string ReadingsNode = "//div[@class='wr-block b-verse bg-white padding-bottom-m']";
+        private readonly string ReadingsNode = "//div[@class='wr-block b-verse bg-white padding-bottom-m']//div[@class='content-body']";
+
 
         public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request)
         {
@@ -52,21 +53,31 @@ namespace CatholicCompanion.Api.Services
 
         public string GetReading(HtmlNode node)
         {
-            var reading = node?.InnerText.Trim();
-
-            if (reading != null)
+            if (node != null)
             {
-                var index = reading.IndexOf('\n');
+                var innerHtml = node.InnerHtml;
+                var textSegments = innerHtml.Split(new[] { "<br>" }, StringSplitOptions.None);
 
-                if (index >= 0)
+                // Initialize an empty string to hold the concatenated result
+                var result = "";
+
+                foreach (var segment in textSegments)
                 {
-                    // Remove everything up to the first newline character
-                    reading = reading.Substring(index + 1).Trim();
+                    // Trim the segment, remove HTML tags, add a space at the end, and add it to the result
+                    var trimmedSegment = segment.Trim();
+                    var textWithoutHtml = RemoveHtmlTags(trimmedSegment);
+                    result += textWithoutHtml + " ";
                 }
+
+                // Return the resulting string
+                return result;
             }
 
-            return reading;
+            return null; // Or return something else as needed
         }
+
+
+
 
 
         private static async Task<(HtmlDocument htmlDoc, string url)> GetHtml(DateRequest request)
@@ -92,5 +103,21 @@ namespace CatholicCompanion.Api.Services
             htmlDoc.LoadHtml(html);
             return (htmlDoc, url);
         }
+
+        public string RemoveHtmlTags(string html)
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+
+            // Remove script and style nodes
+            var nodesToRemove = htmlDoc.DocumentNode.DescendantsAndSelf()
+                .Where(n => n.Name == "script" || n.Name == "style");
+            foreach (var node in nodesToRemove.ToArray())
+                node.Remove();
+
+            // Use InnerText to get the text content
+            return htmlDoc.DocumentNode.InnerText;
+        }
+
     }
 }
