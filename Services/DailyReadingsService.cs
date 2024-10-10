@@ -56,8 +56,9 @@ namespace CatholicCompanion.Api.Services
             if (node != null)
             {
                 var innerHtml = node.InnerHtml;
+                innerHtml = innerHtml.Replace("&nbsp;", " ");
                 var textSegments = innerHtml.Split(new[] { "<br>" }, StringSplitOptions.None);
-
+                
                 // Initialize an empty string to hold the concatenated result
                 var result = "";
 
@@ -84,16 +85,6 @@ namespace CatholicCompanion.Api.Services
 
             return null; // Or return something else as needed
         }
-
-
-
-
-
-
-
-
-
-
 
         private static async Task<(HtmlDocument htmlDoc, string url)> GetHtml(DateRequest request)
         {
