@@ -1,69 +1,55 @@
-﻿using CatholicCompanion.Api.Models;
+using CatholicCompanion.Api.Models;
 using HtmlAgilityPack;
 
 namespace CatholicCompanion.Api.Services
 {
     public class LiturgicalDateService : ILiturgicalDateService
     {
-        private static readonly HttpClient httpClient = new HttpClient();
+        private readonly UsccbClient _client;
+        private readonly ILogger<LiturgicalDateService> _logger;
+
+        public LiturgicalDateService(UsccbClient client, ILogger<LiturgicalDateService> logger)
+        {
+            _client = client;
+            _logger = logger;
+        }
 
         public async Task<DateResponse> GetDate(DateRequest request)
         {
+            if (!request.TryGetDate(out var date))
+            {
+                return new DateResponse { Error = "Please choose a valid date." };
+            }
+
+            var dates = Enumerable.Range(0, 7).Select(offset => date.AddDays(offset)).ToList();
+            var days = await Task.WhenAll(dates.Select(GetDay));
+            return new DateResponse
+            {
+                Date = dates.Select(day => day.ToDateTime(TimeOnly.MinValue)).ToList(),
+                LiturgicalDate = days.Select(day => day ?? "Celebration unavailable").ToList(),
+                Error = days.Any(day => day == null)
+                    ? "Some celebrations could not be loaded. Please try again." : null
+            };
+        }
+
+        private async Task<string?> GetDay(DateOnly date)
+        {
             try
             {
-                var (htmlDocs, dates) = await GetHtml(request);
-                var liturgicalDates = new List<string>();
-                foreach (var htmlDoc in htmlDocs)
+                var document = await _client.GetPage(date);
+                var heading = document.DocumentNode.SelectSingleNode(
+                    "//div[contains(concat(' ', normalize-space(@class), ' '), ' b-lectionary ')]//h2");
+                if (heading == null)
                 {
-                    var liturgicalDate = GetLiturgicalDate(htmlDoc);
-                    if (liturgicalDate != null)
-                        liturgicalDates.Add(liturgicalDate);
+                    return null;
                 }
-                return new DateResponse { LiturgicalDate = liturgicalDates, Date = dates};
+                return HtmlEntity.DeEntitize(heading.InnerText).Trim();
             }
-            catch (FormatException)
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
-                return new DateResponse { Error = "Invalid DateTime" };
+                _logger.LogWarning(ex, "Could not load celebration for {Date}", date);
+                return null;
             }
-            catch (Exception ex)
-            {
-                return new DateResponse { Error = "Error Processing Request: " + ex.Message };
-            }
-
         }
-
-        private static string GetLiturgicalDate(HtmlDocument htmlDoc)
-        {
-            var liturgicalDay = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='wr-block b-lectionary padding-top-s padding-bottom-xxs bg-white']");
-            var liturgicalDayText = liturgicalDay.InnerText.Trim();
-            int index = liturgicalDayText.IndexOf('\n');
-            if (index > -1)
-                liturgicalDayText = liturgicalDayText.Substring(0, index);
-            return liturgicalDayText;
-        }
-
-        private static async Task<(List<HtmlDocument> HtmlDocs, List<DateTime> Dates)> GetHtml(DateRequest request)
-        {
-            var date = DateTime.Parse(request.Date);
-            var daysToProcess = new List<DateTime>();
-            for (int i = 0; i < 7; i++)
-            {
-                daysToProcess.Add(date.AddDays(i));
-            }
-
-            var tasks = daysToProcess.Select(async day =>
-            {
-                var stringDate = day.ToString("MMddyy");
-                var url = $"https://bible.usccb.org/bible/readings/{stringDate}.cfm";
-                var html = await httpClient.GetStringAsync(url);
-                var htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(html);
-                return htmlDoc;
-            });
-
-            var htmlDocs = await Task.WhenAll(tasks);
-            return (HtmlDocs: htmlDocs.ToList(), Dates: daysToProcess);
-        }
-
     }
 }
