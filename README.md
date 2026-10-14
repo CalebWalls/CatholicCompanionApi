@@ -17,6 +17,7 @@ Both existing POST routes accept `{ "date": "2026-10-14" }`. Existing ISO timest
 
 - `/DailyUpdates/DailyReadings`: compatible first-reading, psalm, second-reading, acclamation, and Gospel fields, plus `readingSets`. Each set has celebration, title, lectionary, source note, source URL, ordered sections, and reading options with references and plain text. Same-day linked Mass pages are included; a failed set does not discard working sets.
 - `/DailyUpdates/LiturgicalDate`: seven ordered celebration names and matching calendar dates, with an optional error when some days are unavailable.
+- `/DailyUpdates/SaintOfTheDay`: date, saints listed by Vatican News, optional short summaries, source links, and an optional error. Uses the supplied calendar date, with successful month/day source data cached for six hours. Entries without biographies retain their names and source links. Source failures do not produce invented entries.
 
 The existing response fields and production origin remain compatible. Source outages return safe error messages and links rather than exception details. Calendar failures use a placeholder in the affected position so subsequent days stay aligned.
 

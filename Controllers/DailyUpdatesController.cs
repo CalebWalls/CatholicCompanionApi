@@ -12,12 +12,14 @@ namespace CatholicCompanion.Api.Controllers
         private readonly ILogger<DailyUpdatesController> _logger;
         private readonly ILiturgicalDateService _liturgicalDateService;
         private readonly IDailyReadingsService _dailyReadings;
+        private readonly ISaintOfTheDayService _saints;
 
-        public DailyUpdatesController(ILogger<DailyUpdatesController> logger, ILiturgicalDateService liturgicalDateService, IDailyReadingsService dailyReadings)
+        public DailyUpdatesController(ILogger<DailyUpdatesController> logger, ILiturgicalDateService liturgicalDateService, IDailyReadingsService dailyReadings, ISaintOfTheDayService saints)
         {
             _logger = logger;
             _liturgicalDateService = liturgicalDateService;
             _dailyReadings = dailyReadings;
+            _saints = saints;
         }
 
         [HttpPost]
@@ -32,6 +34,12 @@ namespace CatholicCompanion.Api.Controllers
         public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request)
         {
             return await _dailyReadings.GetDailyReadings(request);
+        }
+
+        [HttpPost("SaintOfTheDay")]
+        public Task<SaintOfTheDayResponse> GetSaintOfTheDay(DateRequest request)
+        {
+            return _saints.GetSaints(request);
         }
     }
 }

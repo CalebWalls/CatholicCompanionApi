@@ -4,6 +4,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<ISaintOfTheDayService, SaintOfTheDayService>(client =>
+{
+    client.BaseAddress = new Uri("https://www.vaticannews.va/en/saints/");
+    client.Timeout = TimeSpan.FromSeconds(15);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("CatholicCompanion/1.0");
+});
 builder.Services.AddHttpClient<UsccbClient>(client =>
 {
     client.BaseAddress = new Uri("https://bible.usccb.org/bible/readings/");
