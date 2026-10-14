@@ -37,3 +37,11 @@ dotnet test Tests/CatholicCompanion.Api.Tests.csproj --no-restore
 ```
 
 The xUnit suite covers request validation, calendar-day preservation, reordered/missing reading sections, text extraction, successful caching, source failures, and calendar alignment. Build outputs are ignored rather than versioned.
+
+## Automatic Azure deployments
+
+The `Deploy API to Azure` GitHub Actions workflow restores from the repository's NuGet.Config, runs the API tests, publishes a portable .NET 8 package, and deploys to the existing `CatholicCompanionApi` App Service whenever code reaches `main`. It can also be run manually from the Actions tab on `main`. Failed tests or builds prevent deployment; overlapping deployments run in order. The final check calls `/health` to verify process health, not upstream reading availability.
+
+Authentication uses OpenID Connect with a dedicated user-assigned identity. Trust is limited to `CalebWalls/CatholicCompanionApi` on `main`, and its Website Contributor role is limited to this API App Service in the personal Azure subscription. The IDs in the workflow identify that identity and subscription; they are not passwords. No publish-profile secret is stored. Standard hosted runners are free for this public repository, and the existing Azure F1 plan is unchanged.
+
+Check the Actions tab for deployment status. To deploy an older version, revert the relevant commit on `main` and push the revert. The workflow does not run on feature branches or pull requests.

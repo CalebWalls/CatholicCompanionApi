@@ -1,0 +1,59 @@
+name: Deploy API to Azure
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: catholiccompanion-api-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out code
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore dependencies
+        run: dotnet restore Tests/CatholicCompanion.Api.Tests.csproj --configfile NuGet.Config
+      - name: Test
+        run: dotnet test Tests/CatholicCompanion.Api.Tests.csproj --configuration Release --no-restore
+      - name: Publish and package
+        run: |
+          dotnet publish CatholicCompanion.Api.csproj --configuration Release --no-restore --property:UseAppHost=false --output publish
+          printf '{"commit":"%s"}\n' "$GITHUB_SHA" > publish/deployment.json
+          cd publish
+          zip -qr ../deploy.zip .
+      - name: Sign in to personal Azure subscription
+        uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
+        with:
+          client-id: 7bf14f6a-771d-461d-aef5-d1f0b5d63421
+          tenant-id: b7365a4f-230e-4d35-ba0c-b9a8d906edfe
+          subscription-id: 9d240ca7-fc0d-43d8-bc39-fada564240d3
+      - name: Deploy API
+        run: |
+          az webapp deploy \
+            --subscription 9d240ca7-fc0d-43d8-bc39-fada564240d3 \
+            --resource-group StudySphere \
+            --name CatholicCompanionApi \
+            --src-path deploy.zip --type zip --clean true --restart true \
+            --async false --track-status false --output none
+      - name: Verify API health
+        run: |
+          curl --fail --silent --show-error --retry 6 --retry-all-errors --retry-delay 10 \
+            'https://catholiccompanionapi.azurewebsites.net/health' \
+            --output health.json
+          python3 -c 'import json; assert json.load(open("health.json"))["status"] == "healthy", "API health check failed"'
