@@ -2,60 +2,40 @@ using CatholicCompanion.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<UsccbClient>(client =>
+{
+    client.BaseAddress = new Uri("https://bible.usccb.org/bible/readings/");
+    client.Timeout = TimeSpan.FromSeconds(15);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("CatholicCompanion/1.0");
+});
 builder.Services.AddTransient<ILiturgicalDateService, LiturgicalDateService>();
 builder.Services.AddTransient<IDailyReadingsService, DailyReadingsService>();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-if (!builder.Environment.IsDevelopment())
-{
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("MyPolicy",
-            builder =>
-            {
-                //change this once deployed
-                builder.WithOrigins("https://catholiccompanion.azurewebsites.net")
-                       .AllowAnyHeader()
-                       .AllowAnyMethod();
-            });
-    });
+var origins = builder.Environment.IsDevelopment()
+    ? new[] { "http://localhost:4200", "http://127.0.0.1:4200" }
+    : new[] { "https://catholiccompanion.azurewebsites.net" };
 
-}
-else
-{
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("MyPolicy",
-            builder =>
-            {
-                builder.WithOrigins("http://localhost:4200")
-                       .AllowAnyHeader()
-                       .AllowAnyMethod();
-            });
-    });
-}
+builder.Services.AddCors(options => options.AddPolicy("CompanionUi",
+    policy => policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//Remove the if statement if you want Swagger to display in prod and dev
-if(app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
-
-app.UseCors("MyPolicy"); // Apply the CORS policy
-
+app.UseCors("CompanionUi");
 app.UseAuthorization();
-
 app.MapControllers();
-
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 app.Run();
