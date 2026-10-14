@@ -4,6 +4,8 @@ ASP.NET Core 10 API serving daily Mass readings and a seven-day US liturgical ca
 
 ## Run locally
 
+Install the .NET 10 SDK before running the commands below.
+
 ```powershell
 dotnet restore --configfile NuGet.Config
 dotnet run --launch-profile http
@@ -45,4 +47,3 @@ The `Deploy API to Azure` GitHub Actions workflow restores from the repository's
 Authentication uses OpenID Connect with a dedicated user-assigned identity. Trust is limited to `CalebWalls/CatholicCompanionApi` on `main`, and its Website Contributor role is limited to this API App Service in the personal Azure subscription. The IDs in the workflow identify that identity and subscription; they are not passwords. No publish-profile secret is stored. Standard hosted runners are free for this public repository, and the existing Azure F1 plan is unchanged.
 
 Check the Actions tab for deployment status. To deploy an older version, revert the relevant commit on `main` and push the revert. The workflow does not run on feature branches or pull requests.
-
