@@ -21,9 +21,13 @@ namespace CatholicCompanion.Api.Services
                 (vigil ? "-Vigil.cfm" : ".cfm");
         }
 
-        public async Task<HtmlDocument> GetPage(DateOnly date, bool vigil = false)
+        public Task<HtmlDocument> GetPage(DateOnly date, bool vigil = false)
         {
-            var path = ReadingPath(date, vigil);
+            return GetPage(ReadingPath(date, vigil));
+        }
+
+        internal async Task<HtmlDocument> GetPage(string path)
+        {
             var cacheKey = "usccb:" + path;
             if (!_cache.TryGetValue<string>(cacheKey, out var html))
             {

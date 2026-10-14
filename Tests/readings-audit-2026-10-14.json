@@ -1,0 +1,760 @@
+{
+  "checkedOn": "2026-10-14",
+  "startDate": "2026-10-14",
+  "endDate": "2027-04-14",
+  "datesAttempted": 183,
+  "datesParsedSuccessfully": 16,
+  "datesUnverified": 167,
+  "hostedCrossCheck": {
+    "datesParsedSuccessfully": 5,
+    "sourceFailures": 60,
+    "datesAttempted": 65
+  },
+  "status": "Incomplete: source access blocked",
+  "evidence": "Hosted App Service logs recorded USCCB HTTP 403 responses. No empty readings were presented as valid. The retrieved November 2 source page parsed five sections, including both Romans options.",
+  "scenariosTested": [
+    "All Souls alternatives",
+    "Christmas linked Mass sets",
+    "long and short forms",
+    "numbered vigil readings",
+    "repeated psalms",
+    "sequence",
+    "partial set failure",
+    "same-day source URL filtering",
+    "in-app option selection"
+  ],
+  "dates": [
+    {
+      "date": "2026-10-14",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-15",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-16",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-17",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-18",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-19",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-20",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-21",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-22",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-23",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-24",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-25",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-26",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-27",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-28",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-29",
+      "status": "Parsed; reading and Gospel present"
+    },
+    {
+      "date": "2026-10-30",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-10-31",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-01",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-02",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-03",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-04",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-05",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-06",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-07",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-08",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-09",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-10",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-11",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-12",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-13",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-14",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-15",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-16",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-17",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-18",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-19",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-20",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-21",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-22",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-23",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-24",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-25",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-26",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-27",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-28",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-29",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-11-30",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-01",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-02",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-03",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-04",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-05",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-06",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-07",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-08",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-09",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-10",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-11",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-12",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-13",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-14",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-15",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-16",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-17",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-18",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-19",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-20",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-21",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-22",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-23",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-24",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-25",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-26",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-27",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-28",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-29",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-30",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2026-12-31",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-01",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-02",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-03",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-04",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-05",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-06",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-07",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-08",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-09",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-10",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-11",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-12",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-13",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-14",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-15",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-16",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-17",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-18",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-19",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-20",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-21",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-22",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-23",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-24",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-25",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-26",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-27",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-28",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-29",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-30",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-01-31",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-01",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-02",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-03",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-04",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-05",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-06",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-07",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-08",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-09",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-10",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-11",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-12",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-13",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-14",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-15",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-16",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-17",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-18",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-19",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-20",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-21",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-22",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-23",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-24",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-25",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-26",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-27",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-02-28",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-01",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-02",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-03",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-04",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-05",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-06",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-07",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-08",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-09",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-10",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-11",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-12",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-13",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-14",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-15",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-16",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-17",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-18",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-19",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-20",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-21",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-22",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-23",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-24",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-25",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-26",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-27",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-28",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-29",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-30",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-03-31",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-01",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-02",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-03",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-04",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-05",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-06",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-07",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-08",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-09",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-10",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-11",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-12",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-13",
+      "status": "Source unavailable; unverified"
+    },
+    {
+      "date": "2027-04-14",
+      "status": "Source unavailable; unverified"
+    }
+  ]
+}
