@@ -1,8 +1,10 @@
 # Catholic Companion API
 
-ASP.NET Core 8 API serving daily Mass readings and a seven-day US liturgical calendar from USCCB.
+ASP.NET Core 10 API serving daily Mass readings and a seven-day US liturgical calendar from USCCB.
 
 ## Run locally
+
+Install the .NET 10 SDK before running the commands below.
 
 ```powershell
 dotnet restore --configfile NuGet.Config
@@ -40,7 +42,7 @@ The xUnit suite covers request validation, calendar-day preservation, reordered/
 
 ## Automatic Azure deployments
 
-The `Deploy API to Azure` GitHub Actions workflow restores from the repository's NuGet.Config, runs the API tests, publishes a portable .NET 8 package, and deploys to the existing `CatholicCompanionApi` App Service whenever code reaches `main`. It can also be run manually from the Actions tab on `main`. Failed tests or builds prevent deployment; overlapping deployments run in order. The final check calls `/health` to verify process health, not upstream reading availability.
+The `Deploy API to Azure` GitHub Actions workflow restores from the repository's NuGet.Config, runs the API tests, publishes a portable .NET 10 package, and deploys to the existing `CatholicCompanionApi` App Service whenever code reaches `main`. It can also be run manually from the Actions tab on `main`. Failed tests or builds prevent deployment; overlapping deployments run in order. The final check calls `/health` to verify process health, not upstream reading availability.
 
 Authentication uses OpenID Connect with a dedicated user-assigned identity. Trust is limited to `CalebWalls/CatholicCompanionApi` on `main`, and its Website Contributor role is limited to this API App Service in the personal Azure subscription. The IDs in the workflow identify that identity and subscription; they are not passwords. No publish-profile secret is stored. Standard hosted runners are free for this public repository, and the existing Azure F1 plan is unchanged.
 
