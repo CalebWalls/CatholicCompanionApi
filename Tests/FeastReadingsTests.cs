@@ -77,7 +77,7 @@ public class FeastReadingsTests
         using var handler = new FeastHandler();
         using var http = new HttpClient(handler) { BaseAddress = new Uri("https://bible.usccb.org/bible/readings/") };
         using var cache = new MemoryCache(new MemoryCacheOptions());
-        var service = new DailyReadingsService(new UsccbClient(http, cache), NullLogger<DailyReadingsService>.Instance);
+        var service = new DailyReadingsService(new UsccbClient(http, cache, new UsccbRequestGate()), NullLogger<DailyReadingsService>.Instance);
         var response = await service.GetDailyReadings(new DateRequest {Date="2026-12-25"});
         Assert.Null(response.Error);
         Assert.Equal(2, response.ReadingSets.Count);

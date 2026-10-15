@@ -75,7 +75,7 @@ public class DailyUpdatesTests
         });
         using var client = new HttpClient(handler) { BaseAddress = new Uri("https://example.com/readings/") };
         using var cache = new MemoryCache(new MemoryCacheOptions());
-        var source = new UsccbClient(client, cache);
+        var source = new UsccbClient(client, cache, new UsccbRequestGate());
         var date = new DateOnly(2026, 10, 14);
         await source.GetPage(date);
         await source.GetPage(date);
@@ -89,7 +89,7 @@ public class DailyUpdatesTests
         using var handler = new ReadingHandler(_ => new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
         using var client = new HttpClient(handler) { BaseAddress = new Uri("https://example.com/") };
         using var cache = new MemoryCache(new MemoryCacheOptions());
-        var source = new UsccbClient(client, cache);
+        var source = new UsccbClient(client, cache, new UsccbRequestGate());
         var service = new DailyReadingsService(source, NullLogger<DailyReadingsService>.Instance);
         var first = await service.GetDailyReadings(new DateRequest { Date = "2026-10-14" });
         await service.GetDailyReadings(new DateRequest { Date = "2026-10-14" });
@@ -111,7 +111,7 @@ public class DailyUpdatesTests
                 });
         using var client = new HttpClient(handler) { BaseAddress = new Uri("https://example.com/") };
         using var cache = new MemoryCache(new MemoryCacheOptions());
-        var service = new LiturgicalDateService(new UsccbClient(client, cache),
+        var service = new LiturgicalDateService(new UsccbClient(client, cache, new UsccbRequestGate()),
             NullLogger<LiturgicalDateService>.Instance);
         var result = await service.GetDate(new DateRequest { Date = "2026-10-14" });
         Assert.Equal(7, result.Date!.Count);
@@ -120,6 +120,68 @@ public class DailyUpdatesTests
         Assert.Equal(new DateTime(2026, 10, 15), result.Date[1]);
         Assert.Equal("A celebration", result.LiturgicalDate[2]);
         Assert.NotNull(result.Error);
+    }
+
+    [Fact]
+    public async Task SharesOneSourceRequestAcrossConcurrentVisitors()
+    {
+        using var handler = new ReadingHandler(_ => new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("<h1>Readings</h1>")
+        });
+        using var http = new HttpClient(handler) { BaseAddress = new Uri("https://example.com/") };
+        using var cache = new MemoryCache(new MemoryCacheOptions());
+        var gate = new UsccbRequestGate();
+        await gate.EnterAsync(CancellationToken.None);
+        var visitors = Enumerable.Range(0, 10).Select(_ => new UsccbClient(http, cache, gate));
+        var pending = visitors.Select(visitor => visitor.GetPage(new DateOnly(2026, 11, 2))).ToArray();
+        gate.Exit();
+        await Task.WhenAll(pending);
+        Assert.Single(handler.Paths);
+    }
+
+    [Theory]
+    [InlineData(HttpStatusCode.Forbidden)]
+    [InlineData(HttpStatusCode.TooManyRequests)]
+    public async Task PausesUncachedRequestsAfterSourceBlocksButStillServesCachedReadings(HttpStatusCode status)
+    {
+        using var handler = new ReadingHandler(request => request.RequestUri!.AbsolutePath.Contains("110126")
+            ? new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("<h1>Cached readings</h1>") }
+            : new HttpResponseMessage(status));
+        using var http = new HttpClient(handler) { BaseAddress = new Uri("https://example.com/") };
+        using var cache = new MemoryCache(new MemoryCacheOptions());
+        var gate = new UsccbRequestGate();
+        var source = new UsccbClient(http, cache, gate);
+        await source.GetPage(new DateOnly(2026, 11, 1));
+        await Assert.ThrowsAsync<HttpRequestException>(() => source.GetPage(new DateOnly(2026, 11, 2)));
+        // A different typed client must share the pause, too.
+        var anotherVisitor = new UsccbClient(http, cache, gate);
+        await Assert.ThrowsAsync<HttpRequestException>(() => anotherVisitor.GetPage(new DateOnly(2026, 11, 3)));
+        var cached = await anotherVisitor.GetPage(new DateOnly(2026, 11, 1));
+        Assert.Contains("Cached readings", cached.DocumentNode.InnerText);
+        Assert.Equal(2, handler.Paths.Count);
+    }
+
+    [Fact]
+    public async Task CancellingAQueuedReadingDoesNotFetchItOrBlockLaterRequests()
+    {
+        var gate = new UsccbRequestGate();
+        await gate.EnterAsync(CancellationToken.None);
+        using var handler = new ReadingHandler(_ => new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("<h1>Readings</h1>")
+        });
+        using var http = new HttpClient(handler) { BaseAddress = new Uri("https://example.com/") };
+        using var cache = new MemoryCache(new MemoryCacheOptions());
+        var source = new UsccbClient(http, cache, gate);
+        using var cancellation = new CancellationTokenSource();
+        var pending = source.GetPage(new DateOnly(2026, 11, 1), cancellationToken: cancellation.Token);
+        cancellation.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
+        Assert.Empty(handler.Paths);
+        gate.Exit();
+        await source.GetPage(new DateOnly(2026, 11, 2));
+        Assert.Single(handler.Paths);
     }
 
     private sealed class ReadingHandler : HttpMessageHandler

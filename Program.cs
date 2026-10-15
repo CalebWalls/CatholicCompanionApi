@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<UsccbRequestGate>();
 builder.Services.AddHttpClient<ISaintOfTheDayService, SaintOfTheDayService>(client =>
 {
     client.BaseAddress = new Uri("https://www.vaticannews.va/en/saints/");
