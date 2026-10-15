@@ -84,7 +84,43 @@ public class RssReadingsTests
         await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => fixture.Rss.GetReadings(new DateOnly(2026, 11, 2))));
         Assert.Single(fixture.Handler.Paths);
         fixture.Clock.Advance(TimeSpan.FromMinutes(16));
+        await fixture.Rss.GetReadings(new DateOnly(2026, 11, 3));
+        Assert.Equal(2, fixture.Handler.Paths.Count);
+    }
+
+    [Fact]
+    public async Task TwoHundredVisitorsShareOneSourceFetchAndKeepTheDateForTwentyFourHours()
+    {
+        using var fixture = new Fixture();
+        var responses = await Task.WhenAll(Enumerable.Range(0, 200).Select(_ =>
+            fixture.Service.GetDailyReadings(new DateRequest { Date = "2026-11-02" })));
+        Assert.All(responses, response => Assert.Equal("Long gospel", response.GospelReading));
+        Assert.Single(fixture.Handler.Paths);
+        // Each visitor receives a separate response, so one cannot modify another's cached data.
+        responses[0].ReadingSets[0].Sections.Clear();
+        Assert.NotEmpty(responses[1].ReadingSets[0].Sections);
+
+        fixture.Clock.Advance(TimeSpan.FromHours(23));
+        fixture.Handler.FeedStatus = HttpStatusCode.Forbidden;
+        var cached = await fixture.Service.GetDailyReadings(new DateRequest { Date = "2026-11-02" });
+        Assert.Equal("Long gospel", cached.GospelReading);
+        Assert.Single(fixture.Handler.Paths);
+
+        fixture.Clock.Advance(TimeSpan.FromHours(2));
+        fixture.Handler.FeedStatus = HttpStatusCode.OK;
         await fixture.Rss.GetReadings(new DateOnly(2026, 11, 2));
+        Assert.Equal(2, fixture.Handler.Paths.Count);
+    }
+
+    [Fact]
+    public async Task CachedYesterdayDoesNotPreventFetchingNewReadingsToday()
+    {
+        using var fixture = new Fixture();
+        Assert.NotEmpty(await fixture.Rss.GetReadings(new DateOnly(2026, 11, 2)));
+        fixture.Clock.Advance(TimeSpan.FromHours(13));
+        fixture.Handler.FeedBody = Feed(datePath: "110326.cfm");
+        Assert.NotEmpty(await fixture.Rss.GetReadings(new DateOnly(2026, 11, 3)));
+        Assert.NotEmpty(await fixture.Rss.GetReadings(new DateOnly(2026, 11, 2)));
         Assert.Equal(2, fixture.Handler.Paths.Count);
     }
 
@@ -190,12 +226,13 @@ public class RssReadingsTests
         public Clock Clock { get; } = new();
         public UsccbRssClient Rss { get; }
         public DailyReadingsService Service { get; }
-        private readonly MemoryCache _cache = new(new MemoryCacheOptions());
+        private readonly MemoryCache _cache;
         private readonly HttpClient _http;
 
         public Fixture()
         {
-            Rss = new UsccbRssClient(new Factory(Handler), NullLogger<UsccbRssClient>.Instance, Clock);
+            _cache = new MemoryCache(new MemoryCacheOptions { Clock = Clock });
+            Rss = new UsccbRssClient(new Factory(Handler), NullLogger<UsccbRssClient>.Instance, Clock, _cache);
             _http = new HttpClient(Handler, disposeHandler: false) { BaseAddress = new Uri("https://bible.usccb.org/bible/readings/") };
             Service = new DailyReadingsService(new UsccbClient(_http, _cache, new UsccbRequestGate()), NullLogger<DailyReadingsService>.Instance, Rss);
         }
@@ -203,10 +240,11 @@ public class RssReadingsTests
         public void Dispose() { Rss.Dispose(); _http.Dispose(); Handler.Dispose(); _cache.Dispose(); }
     }
 
-    internal sealed class Clock : TimeProvider
+    internal sealed class Clock : TimeProvider, Microsoft.Extensions.Internal.ISystemClock
     {
         private DateTimeOffset _now = new(2026, 11, 2, 12, 0, 0, TimeSpan.Zero);
         public override DateTimeOffset GetUtcNow() => _now;
+        public DateTimeOffset UtcNow => _now;
         public void Advance(TimeSpan duration) => _now += duration;
     }
 

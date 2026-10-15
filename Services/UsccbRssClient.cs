@@ -1,6 +1,8 @@
 using System.Xml;
 using System.Xml.Linq;
+using System.Globalization;
 using CatholicCompanion.Api.Models;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CatholicCompanion.Api.Services
 {
@@ -10,15 +12,17 @@ namespace CatholicCompanion.Api.Services
         private readonly IHttpClientFactory _clients;
         private readonly ILogger<UsccbRssClient> _logger;
         private readonly TimeProvider _clock;
+        private readonly IMemoryCache _cache;
         private readonly SemaphoreSlim _refresh = new(1, 1);
         private XDocument? _feed;
         private DateTimeOffset _refreshAfter;
 
-        public UsccbRssClient(IHttpClientFactory clients, ILogger<UsccbRssClient> logger, TimeProvider clock)
+        public UsccbRssClient(IHttpClientFactory clients, ILogger<UsccbRssClient> logger, TimeProvider clock, IMemoryCache cache)
         {
             _clients = clients;
             _logger = logger;
             _clock = clock;
+            _cache = cache;
         }
 
         public async Task<List<ReadingSet>> GetReadings(DateOnly date, CancellationToken cancellationToken = default)
@@ -26,6 +30,10 @@ namespace CatholicCompanion.Api.Services
             await _refresh.WaitAsync(cancellationToken);
             try
             {
+                var cacheKey = "usccb:rss-date:" + date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                if (_cache.TryGetValue<XDocument>(cacheKey, out var cachedFeed))
+                    return UsccbRssParser.ReadingsFor(cachedFeed!, date);
+
                 if (_clock.GetUtcNow() >= _refreshAfter)
                 {
                     try
@@ -52,7 +60,10 @@ namespace CatholicCompanion.Api.Services
                         if (_refreshAfter < retryAt) _refreshAfter = retryAt;
                     }
                 }
-                return _feed == null ? new List<ReadingSet>() : UsccbRssParser.ReadingsFor(_feed, date);
+                var readings = _feed == null ? new List<ReadingSet>() : UsccbRssParser.ReadingsFor(_feed, date);
+                // Keep source data, not mutable responses: linked Mass failures must remain retryable.
+                if (readings.Count > 0) _cache.Set(cacheKey, _feed, TimeSpan.FromHours(24));
+                return readings;
             }
             finally
             {
