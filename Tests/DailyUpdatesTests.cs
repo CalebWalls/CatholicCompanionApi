@@ -90,7 +90,8 @@ public class DailyUpdatesTests
         using var client = new HttpClient(handler) { BaseAddress = new Uri("https://example.com/") };
         using var cache = new MemoryCache(new MemoryCacheOptions());
         var source = new UsccbClient(client, cache, new UsccbRequestGate());
-        var service = new DailyReadingsService(source, NullLogger<DailyReadingsService>.Instance);
+        using var rssFixture = new RssReadingsTests.Fixture();
+        var service = new DailyReadingsService(source, NullLogger<DailyReadingsService>.Instance, rssFixture.Rss);
         var first = await service.GetDailyReadings(new DateRequest { Date = "2026-10-14" });
         await service.GetDailyReadings(new DateRequest { Date = "2026-10-14" });
         Assert.Contains("unavailable", first.Error);

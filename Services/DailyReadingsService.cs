@@ -7,11 +7,13 @@ namespace CatholicCompanion.Api.Services
     {
         private readonly UsccbClient _client;
         private readonly ILogger<DailyReadingsService> _logger;
+        private readonly UsccbRssClient _rss;
 
-        public DailyReadingsService(UsccbClient client, ILogger<DailyReadingsService> logger)
+        public DailyReadingsService(UsccbClient client, ILogger<DailyReadingsService> logger, UsccbRssClient rss)
         {
             _client = client;
             _logger = logger;
+            _rss = rss;
         }
 
         public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request, CancellationToken cancellationToken = default)
@@ -20,6 +22,19 @@ namespace CatholicCompanion.Api.Services
                 return new DailyReadingsResponse { Error = "Please choose a valid date." };
 
             var url = "https://bible.usccb.org/bible/readings/" + UsccbClient.ReadingPath(date);
+            var feedSets = await _rss.GetReadings(date, cancellationToken);
+            if (feedSets.Count > 0)
+            {
+                for (var index = 0; index < feedSets.Count; index++)
+                {
+                    var set = feedSets[index];
+                    if (set.Sections.Count == 0)
+                        feedSets[index] = await LoadSet(new Uri(set.Url).Segments.Last(), set.Title, cancellationToken);
+                }
+                var feedResponse = new DailyReadingsResponse { Url = url, ReadingSets = feedSets };
+                SetLegacyFields(feedResponse, feedSets[0]);
+                return feedResponse;
+            }
             try
             {
                 var document = await _client.GetPage(date, cancellationToken: cancellationToken);
