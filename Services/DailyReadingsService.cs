@@ -7,36 +7,51 @@ namespace CatholicCompanion.Api.Services
     {
         private readonly UsccbClient _client;
         private readonly ILogger<DailyReadingsService> _logger;
+        private readonly UsccbRssClient _rss;
 
-        public DailyReadingsService(UsccbClient client, ILogger<DailyReadingsService> logger)
+        public DailyReadingsService(UsccbClient client, ILogger<DailyReadingsService> logger, UsccbRssClient rss)
         {
             _client = client;
             _logger = logger;
+            _rss = rss;
         }
 
-        public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request)
+        public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request, CancellationToken cancellationToken = default)
         {
             if (!request.TryGetDate(out var date))
                 return new DailyReadingsResponse { Error = "Please choose a valid date." };
 
             var url = "https://bible.usccb.org/bible/readings/" + UsccbClient.ReadingPath(date);
+            var feedSets = await _rss.GetReadings(date, cancellationToken);
+            if (feedSets.Count > 0)
+            {
+                for (var index = 0; index < feedSets.Count; index++)
+                {
+                    var set = feedSets[index];
+                    if (set.Sections.Count == 0)
+                        feedSets[index] = await LoadSet(new Uri(set.Url).Segments.Last(), set.Title, cancellationToken);
+                }
+                var feedResponse = new DailyReadingsResponse { Url = url, ReadingSets = feedSets };
+                SetLegacyFields(feedResponse, feedSets[0]);
+                return feedResponse;
+            }
             try
             {
-                var document = await _client.GetPage(date);
+                var document = await _client.GetPage(date, cancellationToken: cancellationToken);
                 var response = ParseReadings(document, url);
                 var links = UsccbReadingsParser.ReadingLinks(document, date);
                 foreach (var link in links)
-                    response.ReadingSets.Add(await LoadSet(link.Path, link.Title));
+                    response.ReadingSets.Add(await LoadSet(link.Path, link.Title, cancellationToken));
 
                 if (response.ReadingSets.Count == 0)
-                    response.ReadingSets.Add(await LoadSet(UsccbClient.ReadingPath(date, vigil: true), "Vigil Mass"));
+                    response.ReadingSets.Add(await LoadSet(UsccbClient.ReadingPath(date, vigil: true), "Vigil Mass", cancellationToken));
 
                 var available = response.ReadingSets.FirstOrDefault(set => set.Sections.Count > 0);
                 if (available != null) SetLegacyFields(response, available);
                 else response.Error = "The readings for this date could not be loaded. Please try again.";
                 return response;
             }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+            catch (Exception ex) when ((ex is HttpRequestException or TaskCanceledException) && !cancellationToken.IsCancellationRequested)
             {
                 _logger.LogWarning(ex, "Could not load readings for {Date}", date);
                 return new DailyReadingsResponse
@@ -47,16 +62,16 @@ namespace CatholicCompanion.Api.Services
             }
         }
 
-        private async Task<ReadingSet> LoadSet(string path, string title)
+        private async Task<ReadingSet> LoadSet(string path, string title, CancellationToken cancellationToken)
         {
             var url = "https://bible.usccb.org/bible/readings/" + path;
             try
             {
-                var set = UsccbReadingsParser.Parse(await _client.GetPage(path), url, title);
+                var set = UsccbReadingsParser.Parse(await _client.GetPage(path, cancellationToken), url, title);
                 if (set.Sections.Count == 0) set.Error = "This set of readings is not available from the source yet. Please try again.";
                 return set;
             }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+            catch (Exception ex) when ((ex is HttpRequestException or TaskCanceledException) && !cancellationToken.IsCancellationRequested)
             {
                 _logger.LogWarning(ex, "Could not load reading set {Path}", path);
                 return new ReadingSet { Url = url, Title = title, Error = SourceError(ex) + " You can also choose another Mass." };
@@ -65,8 +80,11 @@ namespace CatholicCompanion.Api.Services
 
         private static string SourceError(Exception exception)
         {
-            if (exception is HttpRequestException request && request.StatusCode == System.Net.HttpStatusCode.Forbidden)
-                return "USCCB is temporarily blocking access to these readings. Please try again later.";
+            if (exception is HttpRequestException request && request.StatusCode is
+                System.Net.HttpStatusCode.Forbidden or System.Net.HttpStatusCode.TooManyRequests)
+                return "USCCB is temporarily limiting access to readings. Please wait a minute before trying again. You can still choose a date or open the original readings below.";
+            if (exception is HttpRequestException missing && missing.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return "USCCB has not made readings available at this date’s address. Please choose another date or try again later.";
             return "The readings source is unavailable. Please try again.";
         }
 

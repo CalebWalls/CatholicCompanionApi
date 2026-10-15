@@ -4,6 +4,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<UsccbRequestGate>();
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+builder.Services.AddSingleton<UsccbRssClient>();
+builder.Services.AddHttpClient(UsccbRssClient.ClientName, client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(15);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("CatholicCompanion/1.0");
+});
 builder.Services.AddHttpClient<ISaintOfTheDayService, SaintOfTheDayService>(client =>
 {
     client.BaseAddress = new Uri("https://www.vaticannews.va/en/saints/");

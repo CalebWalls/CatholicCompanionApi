@@ -31,9 +31,9 @@ namespace CatholicCompanion.Api.Controllers
 
         [HttpPost]
         [Route("DailyReadings")]
-        public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request)
+        public async Task<DailyReadingsResponse> GetDailyReadings(DateRequest request, CancellationToken cancellationToken)
         {
-            return await _dailyReadings.GetDailyReadings(request);
+            return await _dailyReadings.GetDailyReadings(request, cancellationToken);
         }
 
         [HttpPost("SaintOfTheDay")]

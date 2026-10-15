@@ -18,6 +18,7 @@
         public string? Celebration { get; set; }
         public string? Lectionary { get; set; }
         public string? Note { get; set; }
+        public string? Copyright { get; set; }
         public string Url { get; set; } = "";
         public string? Error { get; set; }
         public List<ReadingSection> Sections { get; set; } = new();
